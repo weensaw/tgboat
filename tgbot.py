@@ -1,8 +1,9 @@
-
-from telethon import TelegramClient, events
 import datetime
 import os
+
 from dotenv import load_dotenv
+from telethon import TelegramClient, events
+
 
 load_dotenv()
 
@@ -15,15 +16,18 @@ client = TelegramClient('session_name',
 
 
 def format_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc).astimezone().strftime(
-        '%Y-%m-%d %H:%M:%S %Z')
+    return datetime.datetime.fromtimestamp(timestamp,
+                                           datetime.timezone.utc).astimezone(
+                                           ).strftime('%Y-%m-%d %H:%M:%S %Z')
 
 
 @client.on(events.NewMessage(pattern='/start'))
 async def start(event):
     try:
         name = event.sender.first_name
-        await event.respond('Привет {}, введи @никнейм пользователя, чтобы получить информацию)'.format(name))
+        await event.respond('Привет {}, введи @никнейм пользователя, '
+                            'чтобы получить информацию'.format(name))
+
     except Exception:
         pass
 
@@ -37,20 +41,19 @@ async def get_user_info(event):
         user_info += f"Имя: {user.first_name}\n"
         user_info += f"Фамилия: {user.last_name}\n"
         user_info += f"ID пользователя: {user.id}\n"
-        
+
         # Сохранение фотографии аватарки, если она есть
-        photos = await client.get_profile_photos(user.id, limit=5)
-        
+        photos = await client.get_profile_photos(user.id)
+
         # Сохранение фотографий и отправка их
         for i, photo in enumerate(photos):
             photo_file = await client.download_media(photo)
             photo_path = f"{username}_profile_photo_{i}.jpg"
             os.rename(photo_file, photo_path)
             await event.respond(file=photo_path)
-        
+
         user_info += f"Количество фотографий профиля: {len(photos)}"
         await event.respond(user_info)
-    except Exception as e:
+    except Exception:
         pass
 client.run_until_disconnected()
-
