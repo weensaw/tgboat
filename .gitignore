@@ -1,4 +1,3 @@
-.env
 # Игнорировать все файлы изображений
 *.jpg
 *.jpeg
@@ -8,3 +7,11 @@
 *.tiff
 *.tif
 *.svg
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
